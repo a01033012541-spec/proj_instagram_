@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Instagram 계정 분석 — @minjun.wanders</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07070f;--s1:#0e0e1c;--s2:#141422;--s3:#1a1a2e;
+  --bd:rgba(255,255,255,0.07);--bd2:rgba(255,255,255,0.13);
+  --t:#e8e8f2;--t2:#a8a8c8;--mu:#5a5a7a;
+  --pk:#e1306c;--pu:#833ab4;--go:#fcaf45;--or:#f77737;
+  --bl:#4f6ef6;--gr:#22c55e;--rd:#f04060;--in:#818cf8;
+  --grad:linear-gradient(135deg,var(--go),var(--or),var(--pk),var(--pu));
+  --gradh:linear-gradient(90deg,var(--pu),var(--pk),var(--go));
+  --r:16px;--rs:10px
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--t);font-size:14px;line-height:1.5}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:#2a2a42;border-radius:3px}
+
+.page{max-width:1280px;margin:0 auto;padding:32px 24px 80px}
+
+/* ── HEADER ── */
+.ph{display:flex;align-items:center;gap:16px;margin-bottom:40px;padding-bottom:24px;border-bottom:1px solid var(--bd)}
+.ph-logo{width:46px;height:46px;background:var(--grad);border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ph-logo svg{width:24px;height:24px;fill:#fff}
+.ph-name{font-size:1.2rem;font-weight:800;letter-spacing:-.02em}
+.ph-sub{font-size:.78rem;color:var(--mu);margin-top:2px}
+.ph-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.ph-badge{font-size:.72rem;color:var(--mu);background:var(--s3);border:1px solid var(--bd);padding:6px 14px;border-radius:99px}
+.ph-live{font-size:.72rem;font-weight:700;color:var(--gr);background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.25);padding:6px 12px;border-radius:99px;display:flex;align-items:center;gap:5px}
+.ph-live::before{content:'';width:6px;height:6px;background:var(--gr);border-radius:50%;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ── BLOCKS ── */
+.block{background:var(--s1);border:1px solid var(--bd);border-radius:20px;padding:28px 32px;margin-bottom:20px}
+.bh{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.bnum{width:30px;height:30px;background:var(--grad);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:900;color:#fff;flex-shrink:0}
+.btitle{font-size:1.05rem;font-weight:800;letter-spacing:-.02em}
+.btitle em{font-style:normal;font-size:.78rem;font-weight:500;color:var(--mu);margin-left:8px}
+.bh-right{margin-left:auto}
+
+/* ── CARDS ── */
+.card{background:var(--s2);border:1px solid var(--bd);border-radius:var(--r);padding:20px}
+.clabel{font-size:.68rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--mu);margin-bottom:8px}
+
+/* ── SECTION 1 ── */
+.s1-top{display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:start}
+.av-wrap{position:relative;width:110px;height:110px;flex-shrink:0}
+.av-ring{position:absolute;inset:-3px;background:var(--grad);border-radius:50%}
+.av-gap{position:absolute;inset:3px;background:var(--s1);border-radius:50%}
+.av-img{position:absolute;inset:6px;border-radius:50%;overflow:hidden}
+.av-img img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.p-name{font-size:1.35rem;font-weight:900;letter-spacing:-.03em;margin-bottom:2px}
+.p-handle{font-size:.85rem;color:var(--mu);margin-bottom:10px}
+.p-bio{font-size:.84rem;line-height:1.75;color:var(--t2);margin-bottom:14px}
+.p-stats{display:flex;gap:0;border-top:1px solid var(--bd);padding-top:14px}
+.ps{display:flex;flex-direction:column;align-items:center;padding:8px 20px;border-right:1px solid var(--bd)}
+.ps:first-child{padding-left:0;align-items:flex-start}
+.ps:last-child{border-right:none}
+.ps-v{font-size:1.25rem;font-weight:900;letter-spacing:-.02em}
+.ps-l{font-size:.68rem;color:var(--mu);margin-top:1px}
+.ps-s{font-size:.66rem;color:var(--gr);font-weight:700;margin-top:2px}
+
+.meta-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:18px;padding-top:18px;border-top:1px solid var(--bd)}
+.mc{background:var(--s3);border:1px solid var(--bd);border-radius:var(--rs);padding:13px 15px}
+.mc .ml{font-size:.65rem;color:var(--mu);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+.mc .mv{font-size:.84rem;font-weight:700}
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:99px;font-size:.7rem;font-weight:700}
+.bh-pk{background:rgba(225,48,108,.15);color:#f472b6;border:1px solid rgba(225,48,108,.3)}
+.bh-go{background:rgba(252,175,69,.15);color:var(--go);border:1px solid rgba(252,175,69,.3)}
+.bh-gr{background:rgba(34,197,94,.15);color:var(--gr);border:1px solid rgba(34,197,94,.3)}
+.bh-bl{background:rgba(79,110,246,.15);color:#818cf8;border:1px solid rgba(79,110,246,.3)}
+
+/* ── SECTION 2 ── */
+.s2-layout{display:grid;grid-template-columns:340px 1fr;gap:32px;align-items:center}
+.radar-wrap{height:300px;position:relative}
+.score-overall{text-align:center;padding:16px 0 20px;border-bottom:1px solid var(--bd);margin-bottom:20px}
+.sco-n{font-size:3.2rem;font-weight:900;letter-spacing:-.04em;line-height:1;background:var(--gradh);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sco-m{font-size:1rem;color:var(--mu);font-weight:500}
+.sco-d{font-size:.82rem;color:var(--t2);margin-top:6px;line-height:1.5}
+.score-items{display:flex;flex-direction:column;gap:12px}
+.si{display:grid;grid-template-columns:100px 1fr 30px;align-items:center;gap:10px}
+.si-lbl{font-size:.8rem;color:var(--t2);font-weight:600}
+.si-track{height:5px;background:var(--s3);border-radius:99px;overflow:hidden}
+.si-fill{height:100%;border-radius:99px;background:var(--gradh)}
+.si-val{font-size:.78rem;font-weight:800;text-align:right}
+
+/* ── SECTION 3 ── */
+.insight-banner{background:linear-gradient(135deg,rgba(131,58,180,.18),rgba(225,48,108,.15));border:1px solid rgba(225,48,108,.22);border-radius:12px;padding:14px 20px;margin-bottom:20px;display:flex;align-items:center;gap:12px}
+.ib-ico{font-size:1.3rem;flex-shrink:0}
+.ib-txt{font-size:.9rem;font-weight:700}
+.ib-txt span{background:var(--gradh);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+.s3-charts{display:grid;grid-template-columns:5fr 3fr 4fr;gap:16px;align-items:start}
+.chart-card{background:var(--s2);border:1px solid var(--bd);border-radius:var(--r);padding:18px}
+
+/* butterfly */
+.bf-header{display:grid;grid-template-columns:1fr 110px 1fr;margin-bottom:10px}
+.bf-hm{font-size:.72rem;font-weight:700;color:var(--in);text-align:right;padding-right:8px}
+.bf-hc{font-size:.68rem;color:var(--mu);text-align:center}
+.bf-hf{font-size:.72rem;font-weight:700;color:#f472b6;padding-left:8px}
+.bf-row{display:grid;grid-template-columns:1fr 110px 1fr;align-items:center;margin-bottom:8px;gap:0}
+.bf-left{display:flex;justify-content:flex-end}
+.bf-right{display:flex}
+.bf-barm{height:26px;background:linear-gradient(to left,var(--in),#6366f1);border-radius:4px 0 0 4px;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;min-width:4px}
+.bf-barf{height:26px;background:linear-gradient(to right,#f472b6,var(--pk));border-radius:0 4px 4px 0;display:flex;align-items:center;padding-left:6px;min-width:4px}
+.bf-pct{font-size:.66rem;font-weight:700;color:rgba(255,255,255,.9);white-space:nowrap}
+.bf-clbl{font-size:.65rem;color:var(--t2);text-align:center;line-height:1.3;padding:0 6px}
+
+.donut-wrap{height:160px;position:relative;margin-bottom:12px}
+.gender-legend{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.gl-item{display:flex;align-items:center;gap:5px;font-size:.72rem;color:var(--t2)}
+.gl-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+.trend-wrap{height:130px;position:relative;margin-bottom:8px}
+
+.f-stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
+.fsc{background:var(--s3);border:1px solid var(--bd);border-radius:var(--rs);padding:14px 16px}
+.fsc .fl{font-size:.68rem;color:var(--mu);font-weight:600;margin-bottom:6px}
+.fsc .fv{font-size:1.3rem;font-weight:900;letter-spacing:-.03em}
+.fsc .fs{font-size:.72rem;color:var(--t2);margin-top:3px}
+.up{color:var(--gr)}.dn{color:var(--rd)}
+
+/* ── SECTION 4 ── */
+.eng-hero{display:flex;align-items:center;gap:28px;background:linear-gradient(135deg,rgba(131,58,180,.14),rgba(225,48,108,.1));border:1px solid rgba(225,48,108,.2);border-radius:14px;padding:22px 28px;margin-bottom:20px}
+.eng-num{font-size:3rem;font-weight:900;letter-spacing:-.04em;line-height:1;background:var(--gradh);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-align:center;flex-shrink:0}
+.eng-lbl{font-size:.72rem;color:var(--mu);font-weight:600;margin-top:4px;text-align:center}
+.eng-div{width:1px;height:56px;background:var(--bd2);flex-shrink:0}
+.eng-ins{flex:1}
+.ins-tag{display:inline-block;background:rgba(225,48,108,.18);color:#f472b6;font-size:.7rem;font-weight:700;padding:3px 10px;border-radius:99px;border:1px solid rgba(225,48,108,.28);margin-bottom:8px}
+.ins-txt{font-size:.88rem;line-height:1.65;color:var(--t2)}
+.ins-txt strong{color:var(--t)}
+
+.metric-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.mcard{background:var(--s3);border:1px solid var(--bd);border-radius:12px;padding:16px;position:relative;overflow:hidden}
+.mcard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:12px 12px 0 0}
+.mcard.c1::before{background:linear-gradient(90deg,var(--pk),var(--pu))}
+.mcard.c2::before{background:linear-gradient(90deg,var(--bl),var(--in))}
+.mcard.c3::before{background:linear-gradient(90deg,var(--gr),#34d399)}
+.mcard.c4::before{background:linear-gradient(90deg,var(--go),var(--or))}
+.mcard.c5::before{background:linear-gradient(90deg,var(--pu),var(--bl))}
+.mcard.c6::before{background:linear-gradient(90deg,var(--or),var(--go))}
+.mcard.c7::before{background:linear-gradient(90deg,#34d399,var(--bl))}
+.mcard.c8::before{background:linear-gradient(90deg,var(--pk),var(--go))}
+.mc-ico{font-size:1.1rem;margin-bottom:7px}
+.mc-lbl{font-size:.68rem;color:var(--mu);font-weight:600;margin-bottom:5px}
+.mc-val{font-size:1.2rem;font-weight:900;letter-spacing:-.02em}
+.mc-sub{font-size:.66rem;color:var(--mu);margin-top:2px}
+
+/* ── SECTION 5 ── */
+.combo-wrap{height:240px;position:relative;margin-bottom:16px}
+.s5-row{display:grid;grid-template-columns:200px 1fr 1fr;gap:16px;align-items:start}
+.dw{height:180px;position:relative}
+.hw{height:160px;position:relative}
+
+/* ── SECTION 6 ── */
+.s6-layout{display:grid;grid-template-columns:180px 1fr;gap:24px;align-items:start}
+.ht-thumb{width:100%;aspect-ratio:1;border-radius:12px;overflow:hidden;border:1px solid var(--bd)}
+.ht-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.ht-type{display:inline-block;background:rgba(131,58,180,.2);color:#c084fc;font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:99px;border:1px solid rgba(131,58,180,.3);margin-bottom:8px}
+.ht-ttl{font-size:.85rem;font-weight:700;margin-bottom:3px}
+.ht-views{font-size:.75rem;color:var(--mu);margin-bottom:16px}
+.ht-pills{display:flex;flex-wrap:wrap;gap:7px}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:99px;font-size:.78rem;font-weight:600;cursor:default}
+.pill.p1{background:linear-gradient(135deg,rgba(131,58,180,.22),rgba(225,48,108,.22));border:1px solid rgba(225,48,108,.28);color:var(--t)}
+.pill.p2{background:var(--s3);border:1px solid var(--bd);color:var(--t2)}
+.pill .pv{font-size:.65rem;color:var(--go);font-weight:700}
+
+/* ── SECTION 7 ── */
+#media-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:13px}
+.mdc{background:var(--s2);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;transition:transform .2s,border-color .2s}
+.mdc:hover{transform:translateY(-3px);border-color:rgba(225,48,108,.38)}
+.mdt{position:relative;aspect-ratio:1;overflow:hidden}
+.mdt img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s}
+.mdc:hover .mdt img{transform:scale(1.05)}
+.mdt-tag{position:absolute;top:7px;left:7px;padding:3px 7px;border-radius:6px;font-size:.62rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase}
+.tr{background:rgba(131,58,180,.85);color:#fff}
+.tf{background:rgba(79,110,246,.85);color:#fff}
+.mdb{padding:12px}
+.mdc-date{font-size:.66rem;color:var(--mu);margin-bottom:5px}
+.mdc-txt{font-size:.75rem;color:var(--t2);line-height:1.5;margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.mdc-tags{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:9px}
+.mdc-tag{font-size:.6rem;color:var(--in);font-weight:600;background:rgba(129,140,248,.1);padding:2px 5px;border-radius:4px}
+.mdc-stats{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.mds{display:flex;align-items:center;gap:4px;font-size:.68rem;color:var(--t2)}
+.mds span{font-weight:700;color:var(--t)}
+.mdc-extra{margin-top:8px;padding-top:8px;border-top:1px solid var(--bd);display:flex;gap:10px}
+.mde{font-size:.66rem;color:var(--mu)}
+.mde strong{color:var(--t2)}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- HEADER -->
+<header class="ph">
+  <div class="ph-logo">
+    <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+  </div>
+  <div>
+    <div class="ph-name">@minjun.wanders</div>
+    <div class="ph-sub">인스타그램 계정 분석 리포트</div>
+  </div>
+  <div class="ph-right">
+    <span class="ph-badge">📅 2026.04.20 기준</span>
+    <span class="ph-live">LIVE</span>
+  </div>
+</header>
+
+<!-- ═══ BLOCK 1: 기본정보 ═══ -->
+<section class="block">
+  <div class="bh">
+    <div class="bnum">01</div>
+    <div class="btitle">인스타그램 기본 정보 <em>Account Overview</em></div>
+  </div>
+  <div class="s1-top">
+    <div class="av-wrap">
+      <div class="av-ring"></div>
+      <div class="av-gap"></div>
+      <div class="av-img"><img src="https://picsum.photos/seed/traveler_minjun/200/200" alt="profile"/></div>
+    </div>
+    <div>
+      <div class="p-name">이민준</div>
+      <div class="p-handle">@minjun.wanders</div>
+      <div class="p-bio">📍 서울 | 여행하며 기록하는 사람 🌍<br>세계 40개국 방문 · 다음 목적지는 어디?<br>✈️ 여행, 음식, 일상을 진짜처럼 담아요<br>📩 협업 문의: minjun@travel-studio.kr</div>
+      <div class="p-stats">
+        <div class="ps">
+          <div class="ps-v">342</div>
+          <div class="ps-l">게시물</div>
+        </div>
+        <div class="ps">
+          <div class="ps-v">87,432</div>
+          <div class="ps-l">팔로워</div>
+          <div class="ps-s">유효 82,140명 (93.9%)</div>
+        </div>
+        <div class="ps">
+          <div class="ps-v">1,043</div>
+          <div class="ps-l">팔로잉</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="meta-grid">
+    <div class="mc"><div class="ml">가입일</div><div class="mv">2019년 3월</div></div>
+    <div class="mc"><div class="ml">기반 국가</div><div class="mv">🇰🇷 대한민국</div></div>
+    <div class="mc"><div class="ml">계정 공개</div><div class="mv"><span class="badge bh-gr">공개 계정</span></div></div>
+    <div class="mc"><div class="ml">주요 카테고리</div><div class="mv">여행 · 라이프스타일</div></div>
+    <div class="mc">
+      <div class="ml">광고 활동성</div>
+      <div class="mv" style="margin-bottom:4px"><span class="badge bh-pk">높음</span></div>
+      <div style="font-size:.7rem;color:var(--mu)">최근 30개 중 약 67%</div>
+    </div>
+    <div class="mc">
+      <div class="ml">프로필 방문 (일평균)</div>
+      <div class="mv" style="font-size:1.1rem;font-weight:900;color:var(--in)">2,340명</div>
+      <div style="font-size:.68rem;color:var(--mu);margin-top:2px">▲ 전주 대비 +8.2%</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ BLOCK 2: 인스타그램 스코어 ═══ -->
+<section class="block">
+  <div class="bh">
+    <div class="bnum">02</div>
+    <div class="btitle">인스타그램 스코어 <em>Account Score</em></div>
+  </div>
+  <div class="s2-layout">
+    <div class="radar-wrap">
+      <canvas id="radarChart"></canvas>
+    </div>
+    <div>
+      <div class="score-overall">
+        <div class="sco-n">4.1<span class="sco-m" style="font-size:1.2rem"> / 5.0</span></div>
+        <div class="sco-d">이 계정은 <strong style="color:var(--t)">팔로워 충성도</strong>와 <strong style="color:var(--t)">계정 활성화</strong> 지표가 특히 우수해요.<br>꾸준한 업로드와 높은 댓글 참여율이 강점입니다.</div>
+      </div>
+      <div class="score-items">
+        <div class="si"><span class="si-lbl">팔로워</span><div class="si-track"><div class="si-fill" style="width:84%"></div></div><span class="si-val">4.2</span></div>
+        <div class="si"><span class="si-lbl">조회수</span><div class="si-track"><div class="si-fill" style="width:76%"></div></div><span class="si-val">3.8</span></div>
+        <div class="si"><span class="si-lbl">반응도</span><div class="si-track"><div class="si-fill" style="width:82%"></div></div><span class="si-val">4.1</span></div>
+        <div class="si"><span class="si-lbl">팔로워 충성도</span><div class="si-track"><div class="si-fill" style="width:78%"></div></div><span class="si-val">3.9</span></div>
+        <div class="si"><span class="si-lbl">계정 활성화</span><div class="si-track"><div class="si-fill" style="width:86%"></div></div><span class="si-val">4.3</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ BLOCK 3: 팔로워 분석 ═══ -->
+<section class="block">
+  <div class="bh">
+    <div class="bnum">03</div>
+    <div class="btitle">팔로워 분석 <em>Audience Insights</em></div>
+  </div>
+  <div class="insight-banner">
+    <div class="ib-ico">📍</div>
+    <div class="ib-txt"><span>부산에 30대 남성 팔로워가 가장 많아요!</span> — 전체 팔로워 중 약 18.4%가 부산 거주 30대 남성입니다.</div>
+  </div>
+  <div class="s3-charts">
+    <!-- Butterfly -->
+    <div class="chart-card">
+      <div class="clabel">나이 · 성별 분포</div>
+      <div class="bf-header">
+        <div class="bf-hm">남성 (53%)</div>
+        <div class="bf-hc">연령대</div>
+        <div class="bf-hf">여성 (45%)</div>
+      </div>
+      <div class="bf-row">
+        <div class="bf-left"><div class="bf-barm" style="width:30%"><span class="bf-pct">6%</span></div></div>
+        <div class="bf-clbl">~20대<br>초반</div>
+        <div class="bf-right"><div class="bf-barf" style="width:45%"><span class="bf-pct">9%</span></div></div>
+      </div>
+      <div class="bf-row">
+        <div class="bf-left"><div class="bf-barm" style="width:80%"><span class="bf-pct">16%</span></div></div>
+        <div class="bf-clbl">20대중<br>30대초</div>
+        <div class="bf-right"><div class="bf-barf" style="width:70%"><span class="bf-pct">14%</span></div></div>
+      </div>
+      <div class="bf-row">
+        <div class="bf-left"><div class="bf-barm" style="width:100%"><span class="bf-pct">20%</span></div></div>
+        <div class="bf-clbl">30대중<br>40대초</div>
+        <div class="bf-right"><div class="bf-barf" style="width:70%"><span class="bf-pct">14%</span></div></div>
+      </div>
+      <div class="bf-row">
+        <div class="bf-left"><div class="bf-barm" style="width:40%"><span class="bf-pct">8%</span></div></div>
+        <div class="bf-clbl">40대중<br>50대초</div>
+        <div class="bf-right"><div class="bf-barf" style="width:30%"><span class="bf-pct">6%</span></div></div>
+      </div>
+      <div class="bf-row">
+        <div class="bf-left"><div class="bf-barm" style="width:15%"><span class="bf-pct">3%</span></div></div>
+        <div class="bf-clbl">50대중<br>이후</div>
+        <div class="bf-right"><div class="bf-barf" style="width:10%"><span class="bf-pct">2%</span></div></div>
+      </div>
+    </div>
+    <!-- Gender Donut -->
+    <div class="chart-card">
+      <div class="clabel">성별 비율</div>
+      <div class="donut-wrap"><canvas id="genderChart"></canvas></div>
+      <div class="gender-legend">
+        <div class="gl-item"><div class="gl-dot" style="background:var(--in)"></div>남성 53%</div>
+        <div class="gl-item"><div class="gl-dot" style="background:#f472b6"></div>여성 45%</div>
+        <div class="gl-item"><div class="gl-dot" style="background:var(--mu)"></div>기타 2%</div>
+      </div>
+    </div>
+    <!-- Trend -->
+    <div class="chart-card">
+      <div class="clabel">최근 7일 팔로워 추이</div>
+      <div class="trend-wrap"><canvas id="trendChart"></canvas></div>
+      <div style="font-size:.72rem;color:var(--mu);margin-top:8px;line-height:1.6">
+        최근 7일 <span style="color:var(--gr);font-weight:700">꾸준히 상승</span> 중이며<br>
+        어제(4/19)는 <span style="color:var(--rd);font-weight:700">43명 감소</span>했습니다.
+      </div>
+    </div>
+  </div>
+  <!-- Follower stat cards -->
+  <div class="f-stat-row">
+    <div class="fsc"><div class="fl">일 평균 증가</div><div class="fv up">+113명</div><div class="fs">최근 30일 평균</div></div>
+    <div class="fsc"><div class="fl">7일 총 증가</div><div class="fv up">+789명</div><div class="fs">4/14 → 4/20</div></div>
+    <div class="fsc"><div class="fl">어제 변화</div><div class="fv dn">-43명</div><div class="fs">2026.04.19 기준</div></div>
+    <div class="fsc"><div class="fl">프로필 방문 (일평균)</div><div class="fv" style="color:var(--in)">2,340명</div><div class="fs">▲ 전주 대비 +8.2%</div></div>
+  </div>
+</section>
+
+<!-- ═══ BLOCK 4: 미디어 분석 ═══ -->
+<section class="block">
+  <div class="bh">
+    <div class="bnum">04</div>
+    <div class="btitle">미디어 반응 분석 <em>Engagement Analytics</em></div>
+  </div>
+  <div class="eng-hero">
+    <div>
+      <div class="eng-num">8.3%</div>
+      <div class="eng-lbl">인게이지먼트 비율</div>
+    </div>
+    <div class="eng-div"></div>
+    <div class="eng-ins">
+      <div class="ins-tag">💡 인사이트</div>
+      <div class="ins-txt">이 계정은 <strong>'게시물이 도달되는 수치'</strong>가 가장 높아요.<br>일 평균 <strong>43,800회 도달수</strong>를 기록하고 있으며, 이는 동일 팔로워 규모 계정 대비 상위 12% 수준입니다.</div>
+    </div>
+  </div>
+  <div class="metric-grid">
+    <div class="mcard c1"><div class="mc-ico">❤️</div><div class="mc-lbl">일평균 좋아요</div><div class="mc-val">2,180</div><div class="mc-sub">최근 30일 평균</div></div>
+    <div class="mcard c2"><div class="mc-ico">💬</div><div class="mc-lbl">일평균 댓글</div><div class="mc-val">142</div><div class="mc-sub">최근 30일 평균</div></div>
+    <div class="mcard c3"><div class="mc-ico">📡</div><div class="mc-lbl">일평균 도달수</div><div class="mc-val">43,800</div><div class="mc-sub">최근 30일 평균</div></div>
+    <div class="mcard c4"><div class="mc-ico">▶️</div><div class="mc-lbl">일평균 조회수</div><div class="mc-val">89,300</div><div class="mc-sub">최근 30일 평균</div></div>
+    <div class="mcard c5"><div class="mc-ico">🔖</div><div class="mc-lbl">일평균 저장수</div><div class="mc-val">780</div><div class="mc-sub">최근 30일 평균</div></div>
+    <div class="mcard c6"><div class="mc-ico">↗️</div><div class="mc-lbl">일평균 공유수</div><div class="mc-val">312</div><div class="mc-sub">최근 30일 평균</div></div>
+    <div class="mcard c7"><div class="mc-ico">👤</div><div class="mc-lbl">반응 계정수</div><div class="mc-val">3,420</div><div class="mc-sub">일 평균 반응 계정</div></div>
+    <div class="mcard c8"><div class="mc-ico">⚡</div><div class="mc-lbl">총 반응수</div><div class="mc-val">3,635</div><div class="mc-sub">일 평균 합산</div></div>
+  </div>
+</section>
+
+<!-- ═══ BLOCK 5: 미디어 통계 ═══ -->
+<section class="block">
+  <div class="bh">
+    <div class="bnum">05</div>
+    <div class="btitle">미디어 통계 <em>Media Statistics</em></div>
+  </div>
+  <div class="chart-card" style="margin-bottom:16px">
+    <div class="clabel" style="margin-bottom:14px">최근 30일 업로드 수 &amp; 반응수</div>
+    <div class="combo-wrap"><canvas id="comboChart"></canvas></div>
+  </div>
+  <div class="s5-row">
+    <div class="chart-card">
+      <div class="clabel">미디어 유형 비율</div>
+      <div class="dw"><canvas id="mediaRatioChart"></canvas></div>
+      <div class="gender-legend" style="margin-top:8px">
+        <div class="gl-item"><div class="gl-dot" style="background:var(--pu)"></div>릴스 65개</div>
+        <div class="gl-item"><div class="gl-dot" style="background:var(--bl)"></div>피드 35개</div>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="clabel">릴스 평균 지표</div>
+      <div class="hw"><canvas id="reelsBarChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="clabel">피드 평균 지표</div>
+      <div class="hw"><canvas id="feedBarChart"></canvas></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ BLOCK 6: 해시태그 분석 ═══ -->
+<section class="block">
+  <div class="bh">
+    <div class="bnum">06</div>
+    <div class="btitle">해시태그 분석 <em>Hashtag Insights</em></div>
+  </div>
+  <div class="s6-layout">
+    <div>
+      <div class="ht-thumb"><img src="https://picsum.photos/seed/jeju_coast/400/400" alt="top media"/></div>
+    </div>
+    <div>
+      <div class="ht-type">🎬 릴스 · 최고 조회수</div>
+      <div class="ht-ttl">제주도 해안도로 드라이브 🌊</div>
+      <div class="ht-views">👁 184,000 조회 · ❤️ 8,420 좋아요 · 2026.04.15</div>
+      <div class="ht-pills">
+        <span class="pill p1">#제주도 <span class="pv">184K</span></span>
+        <span class="pill p1">#제주여행 <span class="pv">162K</span></span>
+        <span class="pill p1">#해안도로 <span class="pv">98K</span></span>
+        <span class="pill p1">#여행스타그램 <span class="pv">143K</span></span>
+        <span class="pill p1">#travelvlog <span class="pv">76K</span></span>
+        <span class="pill p2">#제주 <span class="pv">210K</span></span>
+        <span class="pill p2">#드라이브 <span class="pv">54K</span></span>
+        <span class="pill p2">#한국여행 <span class="pv">89K</span></span>
+        <span class="pill p2">#감성사진 <span class="pv">67K</span></span>
+        <span class="pill p2">#풍경사진 <span class="pv">48K</span></span>
+        <span class="pill p2">#제주감성 <span class="pv">41K</span></span>
+        <span class="pill p2">#visitjeju <span class="pv">38K</span></span>
+        <span class="pill p2">#koreatravel <span class="pv">72K</span></span>
+        <span class="pill p2">#일상 <span class="pv">320K</span></span>
+        <span class="pill p2">#travel <span class="pv">890K</span></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ BLOCK 7: 미디어 상세 ═══ -->
+<section class="block">
+  <div class="bh">
+    <div class="bnum">07</div>
+    <div class="btitle">미디어 상세 정보 <em>Media Detail</em></div>
+    <div class="bh-right"><span class="badge bh-bl">최근 10개 게시물</span></div>
+  </div>
+  <div id="media-grid"></div>
+</section>
+
+</div><!-- /page -->
+
+<script>
+// ── Global Chart defaults ──
+Chart.defaults.color = '#5a5a7a';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.07)';
+Chart.defaults.font.family = '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+Chart.defaults.font.size = 11;
+
+// ── RADAR CHART ──
+(function(){
+  const ctx = document.getElementById('radarChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels: ['팔로워', '조회수', '반응도', '팔로워\n충성도', '계정\n활성화'],
+      datasets: [{
+        data: [4.2, 3.8, 4.1, 3.9, 4.3],
+        backgroundColor: 'rgba(225,48,108,0.18)',
+        borderColor: '#e1306c',
+        borderWidth: 2,
+        pointBackgroundColor: '#e1306c',
+        pointBorderColor: '#0e0e1c',
+        pointBorderWidth: 2,
+        pointRadius: 5,
+        pointHoverRadius: 7,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.raw} / 5.0` } } },
+      scales: {
+        r: {
+          min: 0, max: 5,
+          ticks: { stepSize: 1, display: false },
+          pointLabels: { font: { size: 11, weight: '700' }, color: '#a8a8c8' },
+          grid: { color: 'rgba(255,255,255,0.08)' },
+          angleLines: { color: 'rgba(255,255,255,0.08)' }
+        }
+      }
+    }
+  });
+})();
+
+// ── GENDER DONUT ──
+(function(){
+  const ctx = document.getElementById('genderChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['남성', '여성', '기타'],
+      datasets: [{ data: [53, 45, 2], backgroundColor: ['#818cf8','#f472b6','#5a5a7a'], borderWidth: 0, hoverOffset: 4 }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout: '68%',
+      plugins: { legend: { display: false } }
+    }
+  });
+})();
+
+// ── FOLLOWER TREND ──
+(function(){
+  const ctx = document.getElementById('trendChart').getContext('2d');
+  const labels = ['4/14','4/15','4/16','4/17','4/18','4/19','4/20'];
+  const data   = [86643, 86797, 86964, 87139, 87274, 87231, 87432];
+  const grad = ctx.createLinearGradient(0,0,0,130);
+  grad.addColorStop(0,'rgba(225,48,108,0.35)');
+  grad.addColorStop(1,'rgba(225,48,108,0)');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{ data, fill: true, backgroundColor: grad, borderColor: '#e1306c', borderWidth: 2,
+        pointBackgroundColor: data.map((_,i)=> i===5 ? '#f04060' : '#e1306c'),
+        pointRadius: data.map((_,i)=> i===5 ? 5 : 3),
+        tension: 0.4 }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend:{display:false}, tooltip: { callbacks: { label: c => ` ${c.raw.toLocaleString()}명` } } },
+      scales: {
+        x: { grid:{display:false}, ticks:{color:'#5a5a7a',font:{size:10}} },
+        y: { grid:{color:'rgba(255,255,255,0.05)'}, ticks:{color:'#5a5a7a',font:{size:10},callback:v=>(v/1000).toFixed(1)+'K'} }
+      }
+    }
+  });
+})();
+
+// ── COMBO CHART (30 days) ──
+(function(){
+  const ctx = document.getElementById('comboChart').getContext('2d');
+  const uploads   = [2,0,3,1,0,2,1,3,0,2,1,0,4,2,1,0,2,3,1,0,2,1,0,3,2,1,4,2,1,3];
+  const reactions = [890,0,1640,520,0,1120,480,2340,0,980,1280,0,3210,1560,720,0,1040,2180,640,0,1340,860,0,2560,1780,580,3840,2120,740,2890];
+  const labels = Array.from({length:30},(_,i)=>{
+    const d = new Date('2026-03-22'); d.setDate(d.getDate()+i);
+    return i%5===0 ? `${d.getMonth()+1}/${d.getDate()}` : '';
+  });
+  const lineGrad = ctx.createLinearGradient(0,0,800,0);
+  lineGrad.addColorStop(0,'#833ab4'); lineGrad.addColorStop(1,'#fcaf45');
+  new Chart(ctx, {
+    data: {
+      labels,
+      datasets: [
+        { type:'bar', label:'업로드 수', data:uploads, backgroundColor:'rgba(131,58,180,0.55)', borderRadius:4, yAxisID:'y' },
+        { type:'line', label:'반응수', data:reactions, borderColor:lineGrad, borderWidth:2.5,
+          pointBackgroundColor:'#fcaf45', pointRadius:3, tension:0.4, yAxisID:'y1', fill:false }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend:{ display:true, position:'top', labels:{color:'#a8a8c8',usePointStyle:true,padding:16} } },
+      scales: {
+        y:  { position:'left',  min:0, max:7, ticks:{stepSize:1,color:'#818cf8',font:{size:10}}, grid:{color:'rgba(255,255,255,0.04)'} },
+        y1: { position:'right', min:0, max:4500, grid:{drawOnChartArea:false}, ticks:{callback:v=>v>=1000?(v/1000).toFixed(1)+'K':v, color:'#fcaf45', font:{size:10}} },
+        x:  { grid:{display:false}, ticks:{color:'#5a5a7a',font:{size:10}} }
+      }
+    }
+  });
+})();
+
+// ── MEDIA RATIO DONUT ──
+(function(){
+  const ctx = document.getElementById('mediaRatioChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['릴스','피드'],
+      datasets: [{ data:[65,35], backgroundColor:['#833ab4','#4f6ef6'], borderWidth:0, hoverOffset:4 }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout:'65%',
+      plugins: { legend:{display:false} }
+    }
+  });
+})();
+
+// ── REELS BAR ──
+(function(){
+  const ctx = document.getElementById('reelsBarChart').getContext('2d');
+  new Chart(ctx, {
+    type:'bar',
+    data: {
+      labels:['좋아요','댓글','조회수(÷10)'],
+      datasets:[{ data:[6840,287,14200], backgroundColor:['rgba(225,48,108,0.7)','rgba(252,175,69,0.7)','rgba(131,58,180,0.7)'], borderRadius:5 }]
+    },
+    options: {
+      indexAxis:'y', responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label:c=>` ${c.raw.toLocaleString()}` } } },
+      scales:{
+        x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#5a5a7a',font:{size:10}}},
+        y:{grid:{display:false},ticks:{color:'#a8a8c8',font:{size:10}}}
+      }
+    }
+  });
+})();
+
+// ── FEED BAR ──
+(function(){
+  const ctx = document.getElementById('feedBarChart').getContext('2d');
+  new Chart(ctx, {
+    type:'bar',
+    data: {
+      labels:['좋아요','댓글','조회수(÷10)'],
+      datasets:[{ data:[3520,134,2460], backgroundColor:['rgba(79,110,246,0.7)','rgba(52,211,153,0.7)','rgba(129,140,248,0.7)'], borderRadius:5 }]
+    },
+    options: {
+      indexAxis:'y', responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label:c=>` ${c.raw.toLocaleString()}` } } },
+      scales:{
+        x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#5a5a7a',font:{size:10}}},
+        y:{grid:{display:false},ticks:{color:'#a8a8c8',font:{size:10}}}
+      }
+    }
+  });
+})();
+
+// ── MEDIA CARDS ──
+const media = [
+  { type:'reels', img:'jeju_coast', title:'제주도 해안도로 드라이브 🌊', content:'제주도 해안도로를 따라 드라이브하며 담은 풍경들. 에메랄드빛 바다와 한라산이 만나는 곳에서 느끼는 감동은 말로 표현할 수가 없어요. 꼭 한번 달려보세요.', date:'2026.04.15', tags:['#제주도','#해안도로','#여행스타그램','#travelvlog'], likes:8420, comments:312, reach:52800, views:184000, shares:890, duration:'0:52', avgWatch:'0:34' },
+  { type:'feed',  img:'tokyo_cafe',  title:'도쿄 숨겨진 카페 5곳 ☕', content:'도쿄에서 찾은 숨겨진 카페 5곳. 현지인들만 아는 골목 카페부터 루프탑 카페까지, 도쿄 카페 투어 완벽 정리해드릴게요.', date:'2026.04.12', tags:['#도쿄카페','#일본여행','#카페투어','#Tokyo'], likes:5230, comments:187, reach:38400, views:42100, shares:420, duration:null, avgWatch:null },
+  { type:'reels', img:'busan_gamcheon', title:'부산 감천문화마을 🎨', content:'부산 감천문화마을의 골목골목을 누비며 담은 영상. 알록달록 집들과 벽화들이 이렇게 예쁜 곳인 줄 몰랐어요. 강추!', date:'2026.04.09', tags:['#부산','#감천문화마을','#korea','#여행스타그램'], likes:6840, comments:245, reach:47200, views:156000, shares:720, duration:'0:38', avgWatch:'0:26' },
+  { type:'feed',  img:'seoul_han',    title:'서울 한강 야경 🌃', content:'서울 한강에서 보는 야경은 정말 별 다른 것 같아요. 노을 지는 순간부터 도심 불빛이 켜지는 시간까지 모두 담았습니다.', date:'2026.04.06', tags:['#서울','#한강야경','#서울야경','#도시감성'], likes:3840, comments:156, reach:32100, views:38400, shares:310, duration:null, avgWatch:null },
+  { type:'reels', img:'kyoto_bamboo',  title:'교토 대나무숲 새벽 산책 🎋', content:'교토 아라시야마 대나무숲 새벽 6시. 관광객 없는 고요한 대나무숲을 혼자 걷는 경험은 정말 특별했어요.', date:'2026.04.02', tags:['#교토','#아라시야마','#일본여행','#교토여행'], likes:9240, comments:387, reach:61400, views:203000, shares:1240, duration:'1:02', avgWatch:'0:48' },
+  { type:'feed',  img:'bangkok_food',  title:'방콕 거리음식 TOP 10 🍜', content:'방콕 야시장에서 먹은 거리음식 TOP 10. 팟타이부터 망고 찹쌀밥까지, 방콕 음식여행 완전 정복.', date:'2026.03.28', tags:['#방콕','#태국여행','#거리음식','#foodie'], likes:4520, comments:213, reach:36800, views:41200, shares:480, duration:null, avgWatch:null },
+  { type:'reels', img:'hongkong_night', title:'홍콩 야경 타임랩스 🌃', content:'홍콩 빅토리아 피크에서 찍은 야경 타임랩스. 도시의 불빛이 켜지는 마법 같은 순간을 카메라에 담았어요.', date:'2026.03.24', tags:['#홍콩','#홍콩야경','#타임랩스','#HongKong'], likes:7650, comments:298, reach:54300, views:178000, shares:960, duration:'1:08', avgWatch:'0:51' },
+  { type:'feed',  img:'jeju_sunrise',  title:'제주 성산일출봉 일출 🌅', content:'새벽 4시 30분에 일어나서 오른 성산일출봉. 힘든 만큼 보상받는 뷰였어요. 이 경치는 꼭 직접 봐야 해요.', date:'2026.03.20', tags:['#제주','#성산일출봉','#일출','#sunrise'], likes:5890, comments:234, reach:44100, views:51300, shares:620, duration:null, avgWatch:null },
+  { type:'reels', img:'barcelona_gaudi', title:'바르셀로나 가우디 투어 🏛️', content:'바르셀로나 가우디 건축물 투어. 사그라다 파밀리아부터 구엘 공원까지, 천재 건축가의 세계 속으로 빠져들었어요.', date:'2026.03.16', tags:['#바르셀로나','#가우디','#스페인','#Barcelona'], likes:8930, comments:356, reach:58700, views:194000, shares:1130, duration:'1:28', avgWatch:'1:02' },
+  { type:'feed',  img:'naples_pizza',   title:'나폴리 최고의 피자 🍕', content:'나폴리 현지인이 추천한 3대 피제리아를 모두 다녀온 후기. 역시 본고장 피자는 달라요. 이걸 먹고 나면 다른 피자를 못 먹게 됩니다.', date:'2026.03.12', tags:['#나폴리','#이탈리아','#피자','#Naples'], likes:4210, comments:178, reach:33600, views:38900, shares:390, duration:null, avgWatch:null },
+];
+
+function fmt(n){ return n >= 10000 ? (n/10000).toFixed(1)+'만' : n >= 1000 ? (n/1000).toFixed(1)+'K' : n.toString(); }
+
+const grid = document.getElementById('media-grid');
+grid.innerHTML = media.map(m => `
+  <div class="mdc">
+    <div class="mdt">
+      <img src="https://picsum.photos/seed/${m.img}/400/400" alt="${m.title}" loading="lazy"/>
+      <span class="mdt-tag ${m.type==='reels'?'tr':'tf'}">${m.type==='reels'?'릴스':'피드'}</span>
+    </div>
+    <div class="mdb">
+      <div class="mdc-date">${m.date}</div>
+      <div class="mdc-txt">${m.content}</div>
+      <div class="mdc-tags">${m.tags.map(t=>`<span class="mdc-tag">${t}</span>`).join('')}</div>
+      <div class="mdc-stats">
+        <div class="mds">❤️ <span>${fmt(m.likes)}</span></div>
+        <div class="mds">💬 <span>${fmt(m.comments)}</span></div>
+        <div class="mds">📡 <span>${fmt(m.reach)}</span></div>
+        <div class="mds">▶️ <span>${fmt(m.views)}</span></div>
+        <div class="mds">↗️ <span>${fmt(m.shares)}</span></div>
+      </div>
+      ${m.type==='reels' ? `<div class="mdc-extra"><div class="mde">⏱ 영상 <strong>${m.duration}</strong></div><div class="mde">👁 평균시청 <strong>${m.avgWatch}</strong></div></div>` : ''}
+    </div>
+  </div>
+`).join('');
+</script>
+</body>
+</html>
